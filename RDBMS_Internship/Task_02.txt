@@ -1,0 +1,226 @@
+
+CREATE DATABASE ola;
+USE ola;
+
+CREATE TABLE driver (
+    driver_id INT PRIMARY KEY,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    phone VARCHAR(15) NOT NULL UNIQUE,
+    city VARCHAR(100) NOT NULL,
+    vehicle_type VARCHAR(20) NOT NULL,
+    rating DECIMAL(3 , 2 ) CHECK (rating >= 0 AND rating <= 5)
+);
+
+INSERT INTO driver (driver_id, first_name, last_name, phone, city, vehicle_type, rating)
+VALUES
+(1, 'John', 'Doe', '1234567890', 'New York', 'Sedan', 4.5),
+(2, 'Jane', 'Smith', '0987654321', 'Los Angeles', 'SUV', 4.8),
+(3, 'Michael', 'Johnson', '1122334455', 'Chicago', 'Hatchback', 4.2),
+(4, 'Sarah', 'Lee', '2233445566', 'San Francisco', 'Minivan', 4.6),
+(5, 'David', 'Brown', '3344556677', 'Miami', 'SUV', 4.7),
+(6, 'Emily', 'Clark', '4455667788', 'Dallas', 'Sedan', 3.9),
+(7, 'Daniel', 'Lopez', '5566778899', 'Houston', 'SUV', 4.4),
+(8, 'Sophia', 'White', '6677889900', 'Los Angeles', 'Hatchback', 4.3),
+(9, 'Chris', 'Wilson', '7788990011', 'New York', 'SUV', 4.0),
+(10, 'Olivia', 'Taylor', '8899001122', 'Chicago', 'Sedan', 4.9);
+
+CREATE TABLE rider (
+    rider_id INT PRIMARY KEY,                 
+    first_name VARCHAR(50) NOT NULL,           
+    last_name VARCHAR(50) NOT NULL,            
+    phone VARCHAR(15) NOT NULL UNIQUE,        
+    city VARCHAR(100) NOT NULL,              
+    join_date DATE NOT NULL                    
+);
+
+INSERT INTO rider (rider_id, first_name, last_name, phone, city, join_date)
+VALUES
+(1, 'Alice', 'Brown', '5551234567', 'New York', '2024-05-12'),
+(2, 'Bob', 'White', '5552345678', 'Los Angeles', '2023-08-30'),
+(3, 'Charlie', 'Green', '5553456789', 'Chicago', '2022-10-15'),
+(4, 'Daniel', 'King', '5554567890', 'San Francisco', '2021-06-20'),
+(5, 'Eva', 'Kingston', '5555678901', 'Miami', '2023-02-25'),
+(6, 'Frank', 'Harris', '5556789012', 'Dallas', '2024-01-01'),
+(7, 'Grace', 'Miller', '5557890123', 'Houston', '2023-11-17'),
+(8, 'Hannah', 'Scott', '5558901234', 'Los Angeles', '2022-07-22'),
+(9, 'Ivy', 'Lewis', '5559012345', 'New York', '2021-09-10'),
+(10, 'Jack', 'Martin', '5550123456', 'Chicago', '2024-04-13');
+
+CREATE TABLE ride (
+    ride_id INT PRIMARY KEY,                 
+    rider_id INT NOT NULL,                     
+    driver_id INT NOT NULL,                   
+    ride_date DATETIME NOT NULL,            
+    pickup_location VARCHAR(255) NOT NULL,    
+    drop_location VARCHAR(255) NOT NULL,       
+    distance DECIMAL(10, 2) NOT NULL,
+    fare DECIMAL(10, 2) NOT NULL,             
+    ridestatus VARCHAR(20) NOT NULL,          
+    FOREIGN KEY (rider_id) REFERENCES rider(rider_id),   
+    FOREIGN KEY (driver_id) REFERENCES driver(driver_id)
+);
+
+INSERT INTO ride (ride_id, rider_id, driver_id, ride_date, pickup_location, drop_location, distance, fare, ridestatus)
+VALUES
+(1, 1, 1, '2025-01-10 08:30:00', 'Times Square, New York', 'Central Park, New York', 5.0, 15.50, 'Completed'),
+(2, 2, 2, '2025-01-10 09:00:00', 'Los Angeles International Airport', 'Hollywood Boulevard', 10.0, 25.00, 'Completed'),
+(3, 3, 3, '2025-01-10 10:15:00', 'Chicago O’Hare Airport', 'Navy Pier, Chicago', 8.5, 22.75, 'Ongoing'),
+(4, 4, 4, '2025-01-11 08:00:00', 'Union Square, San Francisco', 'Golden Gate Bridge', 3.5, 12.00, 'Completed'),
+(5, 5, 5, '2025-01-11 09:30:00', 'South Beach, Miami', 'Miami Beach', 2.0, 10.00, 'Completed'),
+(6, 6, 6, '2025-01-11 10:45:00', 'Dallas Convention Center', 'Reunion Tower', 4.5, 18.00, 'Ongoing'),
+(7, 7, 7, '2025-01-11 11:00:00', 'Minute Maid Park, Houston', 'The Galleria', 6.5, 20.00, 'Completed'),
+(8, 8, 8, '2025-01-12 07:00:00', 'Los Angeles Convention Center', 'Santa Monica Pier', 12.0, 30.00, 'Completed'),
+(9, 9, 9, '2025-01-12 08:30:00', 'Wall Street, New York', 'Times Square, New York', 3.0, 12.00, 'Cancelled'),
+(10, 10, 10, '2025-01-12 09:00:00', 'Millennium Park, Chicago', 'The Art Institute of Chicago', 4.0, 14.00, 'Completed');
+
+CREATE TABLE payment (
+    payment_id INT PRIMARY KEY,               
+    ride_id INT NOT NULL,                       
+    payment_method VARCHAR(20) NOT NULL,        
+    amount DECIMAL(10, 2) NOT NULL,            
+    payment_date DATETIME NOT NULL,             
+    FOREIGN KEY (ride_id) REFERENCES ride(ride_id)  
+);
+
+INSERT INTO payment (payment_id, ride_id, payment_method, amount, payment_date)
+VALUES
+(1, 1, 'Card', 15.50, '2025-01-10 09:00:00'),
+(2, 2, 'Cash', 25.00, '2025-01-10 09:30:00'),
+(3, 3, 'Wallet', 22.75, '2025-01-10 11:00:00'),
+(4, 4, 'Card', 12.00, '2025-01-11 08:30:00'),
+(5, 5, 'Cash', 10.00, '2025-01-11 10:00:00'),
+(6, 6, 'Wallet', 18.00, '2025-01-11 11:15:00'),
+(7, 7, 'Card', 20.00, '2025-01-11 11:30:00'),
+(8, 8, 'Cash', 30.00, '2025-01-12 07:30:00'),
+(9, 9, 'Card', 12.00, '2025-01-12 09:15:00'),
+(10, 10, 'Wallet', 14.00, '2025-01-12 09:30:00');
+
+
+
+1. Retrieve the names and contact details of all drivers with a rating of 4.5 or higher.
+
+SELECT first_name, last_name, phone
+FROM driver
+WHERE rating >= 4.5;
+
+2. Find the total number of rides completed by each driver.
+
+SELECT d.first_name, d.last_name, COUNT(r.ride_id) AS total_completed_rides
+FROM driver AS d
+JOIN ride r ON d.driver_id = r.driver_id
+WHERE r.ridestatus = 'Completed'
+GROUP BY d.driver_id
+ORDER BY total_completed_rides DESC;
+
+3. List all riders who have never booked a ride.
+
+SELECT r.first_name, r.last_name, r.phone
+FROM rider AS r
+LEFT JOIN ride ri ON r.rider_id = ri.rider_id
+WHERE ri.ride_id IS NULL;
+
+4. Calculate the total earnings of each driver from completed rides.
+
+SELECT d.first_name, d.last_name, SUM(r.fare) AS total_earnings
+FROM driver d
+JOIN ride r ON d.driver_id = r.driver_id
+WHERE r.ridestatus = 'Completed'
+GROUP BY d.driver_id
+ORDER BY total_earnings DESC;
+
+5. Retrieve the most recent ride for each rider.
+
+SELECT r.first_name AS rider_first_name,
+       r.last_name AS rider_last_name,
+       ri.ride_id,
+       ri.ride_date,
+       ri.pickup_location,
+       ri.drop_location,
+       ri.distance,
+       ri.fare,
+       ri.ridestatus
+FROM rider r
+JOIN ride ri ON r.rider_id = ri.rider_id
+WHERE ri.ride_date = (
+    SELECT MAX(ride_date)
+    FROM ride
+    WHERE rider_id = r.rider_id
+)
+ORDER BY r.rider_id;
+
+6. Count the number of rides taken in each city.
+
+SELECT r.city, COUNT(ri.ride_id) AS total_rides
+FROM rider r
+JOIN ride ri ON r.rider_id = ri.rider_id
+GROUP BY r.city
+ORDER BY total_rides DESC;
+
+7. List all rides where the distance was greater than 20 km.
+
+SELECT ri.ride_id, r.first_name AS rider_first_name, r.last_name AS rider_last_name,
+       d.first_name AS driver_first_name, d.last_name AS driver_last_name,
+       ri.ride_date, ri.pickup_location, ri.drop_location, ri.distance, ri.fare, ri.ridestatus
+FROM ride ri
+JOIN rider r ON ri.rider_id = r.rider_id
+JOIN driver d ON ri.driver_id = d.driver_id
+WHERE ri.distance > 20
+ORDER BY ri.ride_date DESC;
+
+8. Identify the most preferred payment method.
+
+SELECT payment_method, COUNT(payment_id) AS payment_count
+FROM payment
+GROUP BY payment_method
+ORDER BY payment_count DESC
+LIMIT 1;
+
+9. Find the top 3 highest-earning drivers.
+
+SELECT d.first_name, d.last_name, SUM(r.fare) AS total_earnings
+FROM driver d
+JOIN ride r ON d.driver_id = r.driver_id
+WHERE r.ridestatus = 'Completed'
+GROUP BY d.driver_id
+ORDER BY total_earnings DESC
+LIMIT 3;
+
+10. Retrieve details of all cancelled rides along with the rider's and driver's names.
+
+SELECT r.first_name AS rider_first_name, r.last_name AS rider_last_name,
+       d.first_name AS driver_first_name, d.last_name AS driver_last_name,
+       ri.ride_id, ri.ride_date, ri.pickup_location, ri.drop_location,
+       ri.distance, ri.fare, ri.ridestatus
+FROM ride ri
+JOIN rider r ON ri.rider_id = r.rider_id
+JOIN driver d ON ri.driver_id = d.driver_id
+WHERE ri.ridestatus = 'Cancelled'
+ORDER BY ri.ride_date DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
